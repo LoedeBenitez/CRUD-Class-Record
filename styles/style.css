@@ -1,0 +1,28 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+td{
+    max-width: 600px;
+    white-space: nowrap;
+}
+.padding-r{
+    padding-right: 10px;
+}
+.table-responsive {
+    min-width:700px;
+}
+
+
+@media only screen and (max-width: 1200px) {
+    th,tr,td{
+        font-size: 15px;
+    }
+    #add_student_text{
+        display: none;
+        width: fit-content;
+        height: fit-content;
+    }
+}

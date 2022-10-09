@@ -1,0 +1,150 @@
+<?php
+
+    $server = "localhost";
+    $username = "root";
+    $password = "12345";
+    $database = "shopdb";
+    $conn = new mysqli($server, $username, $password, $database);
+
+
+    //CONNECTION OF DATABASE FROM WORKBENCH
+    if($conn->connect_error){
+        die("Connection failed ".mysqli_connect_error());
+    }else{
+        // echo "Connected Succesfully";
+    }
+
+
+    //VALUES
+    $firstname = $lastname = $email = $contact = "";
+    $firstname_err = $lastname_err = $email_err = $contact_err = "";
+
+    //SUBMITTING METHOD CHECKING
+    if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if(empty($_POST["firstname"])){
+            $firstname_err = " Firstname is required";
+        }else{
+            $firstname = $_POST["firstname"];
+        }
+
+        if(empty($_POST["lastname"])){
+            $lastname_err = " Lastname is required";
+        }else{
+            $lastname = $_POST["lastname"];
+        }
+
+        if(empty($_POST["email"])){
+            $email_err = " Email is required";
+        }else{
+            $email = $_POST["email"];
+        }
+
+        if(empty($_POST["contact"])){
+            $contact_err = " Contact is required";
+        }else{
+            $contact = $_POST["contact"];
+        }
+
+
+        //FINALIZING DATA FOR IMPORTING TO DATABASE 
+        if($firstname != "" && $lastname != "" && $email != "" && $contact != ""){
+            $insert = "INSERT INTO `shopdb`.`employee_table` (`e_firstname`, `e_lastname`, `e_email`, `e_contactno`) VALUES ('$firstname', '$lastname', '$email', '$contact');";
+
+
+            if($conn->query($insert) === TRUE){
+                echo "INSERTED";
+            }
+        }else{
+            echo "NOT INSERTED";
+        }
+    }
+
+
+
+    //FUNCTION TRIMMER
+    function trimmer($data){
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+
+    if(isset($_POST['login'])){
+        login();
+    }
+    function login(){
+        $server = "localhost";
+        $username = "root";
+        $password = "12345";
+        $database = "shopdb";
+        $conn = new mysqli($server, $username, $password, $database);
+        //VALUE
+        $email = $_POST["l_email"];
+        $lastname = $_POST["l_name"];
+
+        $confirm_e = "";
+        $confirm_l = "";
+
+        $select = "SELECT e_email, e_lastname FROM shopdb.employee_table WHERE e_email = '$email' AND e_lastname = '$lastname';";
+        $result = $conn->query($select);
+        if($result->num_rows > 0){
+            while($row = $result -> fetch_assoc()){
+                $confirm_e = $row["e_email"];
+                $confirm_l = $row["e_lastname"];
+            }
+            echo "exist".$confirm_e.$confirm_l;//NEXT PAGE HERE
+        }else{
+            echo "does not exist".$confirm_e.$confirm_l;
+        }
+    }
+
+    //CLOSING OF DATABASE
+    $conn -> close();
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BASIC PHP BACKEND</title>
+</head>
+<body>
+    <h1>ADD EMPLOYEE</h1>
+    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" id="firstname">
+        <span>*<?php echo $firstname_err?></span>
+        <br>
+
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" id="lastname">
+        <span>*<?php echo $lastname_err?></span>
+        <br>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email">
+        <span>*<?php echo $email_err?></span>
+        <br>
+
+        <label for="contact">Contact No</label>
+        <input type="text" name="contact" id="contact">
+        <span>*<?php echo $contact_err?></span>
+        <br>
+
+        <input type="submit" name="submit_btn" id="submit_btn">
+    </form>
+
+
+    <br><br>
+    <form action="<?php echo $_SERVER['PHP_SELF'];?>" method="POST">
+        <label for="l_email">Email: </label>
+        <input type="email" id="l_email" name="l_email">
+        <label for="l_name">Last Name: </label>
+        <input type="text" id="l_name" name="l_name">
+        <button name="login" value="login">LOGIN</button>
+    </form>
+</body>
+</html>
