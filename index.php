@@ -1,6 +1,6 @@
 <?php
     session_start();
-
+    echo "Github";
     require 'pages/db.php';
 ?>
 
